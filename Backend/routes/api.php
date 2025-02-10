@@ -12,7 +12,7 @@ Route::get('/user', function (Request $request) {
 // user  routes
 Route::post('/user/register',[UserController::class,'register']);
 Route::post('/user/login',[UserController::class,'login']);
-Route::post('/user/logout',[UserController::class,'logout']);
+Route::get('/user/logout',[UserController::class,'logout']);
 
 Route::middleware(JwtMiddlwere::class)->group(function(){
 

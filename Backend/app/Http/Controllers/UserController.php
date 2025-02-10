@@ -35,13 +35,16 @@ class UserController extends Controller
         $user=User::where('email',$request->email)->first();
         if(!$user){
             return response()->json([
-
-                'error'=>'Invalid email'
+                'errors'=>[
+                    "email"=>'Invalid email'
+                ]
             ],404);
         }
         elseif(!Hash::check($request->password,$user->password)){
             return response()->json([
-                'error'=>"Incorrecte password" 
+                'errors'=>[
+                    "password"=>"Incorrecte password" 
+                ]
             ],401); // 401 == non autorisè
         }
         $token=JWTAuth::fromUser($user);
@@ -59,11 +62,12 @@ class UserController extends Controller
         $user=$request->get('user');
         return response()->json([
             'message'=>'Suucefelly',
+            'all lignes'=>'use ligne test pour tester est ce que tous les donner envoyer avec succes',
             'user'=>$user
         ],200);
     }
 
-    public function Logut(Request $request){
+    public function Logout(){
         try{
             
             $token=JWTAuth::getToken();
@@ -71,7 +75,7 @@ class UserController extends Controller
                 return  response()->json(['error'=>'token not provided'],404);
             }
             JWTAuth::invalidate($token);// logout en invlide le token pour ne pas faie
-            return  response()->json(['message'=>'logout est réussie'],401);
+            return  response()->json(['message'=>'logout est réussie'],200);
         }
         catch(\tymon\JWTAuth\Exceptions\JWTException  $e){
             return response()->json(['error'=>'lougout ne pas rèussie'],404);
