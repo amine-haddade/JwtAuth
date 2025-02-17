@@ -4,30 +4,23 @@ import { Menu, X } from "lucide-react"; // Icônes pour le menu mobile
 import { Outlet } from 'react-router-dom'
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../Store/Actions/Action";
 
 function Navbare() {
   // state de store 
-    const user=useSelector(state=>state.user)
-    const token=useSelector(state=>state.token)
+    const user=useSelector(state=>state.userState.user)
+    const token=useSelector(state=>state.userState.token)
     const dispatch=useDispatch()
 
 
     const [isOpen, setIsOpen] = useState(false); // État pour afficher/cacher le menu mobile
     const navigate=useNavigate()
     
-   // logout function user
+   // logout function user qui apelle une action 
     const handleLogout = async()=>{
-      try{
-        await axios
-        .get("http://127.0.0.1:8000/api/user/logout",{
-          headers:{Authorization:`Bearer ${token}`}
-        })
-        //vidè le localsotorage
-        dispatch({type:"logout"})
+        dispatch(logout(token))
         navigate("/login")
-      }catch(err){
-        console.error(err)
-      }
+      
     }
     
   return (
@@ -47,6 +40,12 @@ function Navbare() {
             </Link>
             <Link to="/" className="text-gray-700 hover:text-blue-500">
               Dashboard
+            </Link>
+            <Link to="listUsers" className="text-gray-700 hover:text-blue-500">
+              List Users
+            </Link>
+            <Link to="listGroups" className="text-gray-700 hover:text-blue-500">
+              List groupes
             </Link>
             {user ? (
               <span>{user.name} <button  className='text-lg text-white  rounded-md border-none bg-red-600 py-1 px-3 ' onClick={handleLogout} >logout</button></span>

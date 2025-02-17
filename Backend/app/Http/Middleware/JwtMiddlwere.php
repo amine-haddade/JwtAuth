@@ -18,8 +18,8 @@ class JwtMiddlwere
     {
         try{
             // parstoken permet de extraire le token á aprtire de l‘entéte de request souvent sur le Bearer Token
-            // authenticate permet ce methode essaie de valider le token et identifier le user associè de toekn
-            $user=JWTAuth::parseToken()->authenticate();
+            // authenticate permet de dècode le tone est extraire le id est chrcher le user associè de ce id sur la base de donner 
+            $user=JWTAuth::parseToken()->authenticate();        
 
             
         }

@@ -10,18 +10,49 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
 {
+
+    public function users(){
+        $users=User::All();
+        return  response()->json([
+            "users"=>$users
+        ],200);
+    }
     public function register(RegisterRequest $request){
         $validation=$request->validated();
         $user=User::create($validation);
 
         // crèe une token á l‘aide de jwt
         $token=JWTAuth::fromUser($user);  
-
-
+        
         return response()->json([
             'message'=>'l‘utilisateur crèe avec succèse',
             'user'=>$user,
             'token'=>$token
+        ],201);
+        
+        
+    }
+    public function update(request $request,$id){
+        $user=User::find($id);
+        if(!$user){
+            return  response()->json([
+                "message "=>"l‘utilisateurs non trouvè",
+            ],404);
+        }
+        $validatedData = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:users,email,'.$id,
+            'password' => 'sometimes|min:4',
+        ]);
+        if(isset($validatedData['password'])){
+            $validatedData['password']=Hash::make($validatedData['password']);
+       }
+       $user->update($validatedData);
+
+        return response()->json([
+            'message'=>'l‘utilisateur èter modifier avec succèse',
+            'user'=>$user,
+            
         ],201);
         
         
@@ -67,7 +98,7 @@ class UserController extends Controller
         ],200);
     }
 
-    public function Logout(){
+    public function Logout(Request $request){
         try{
             
             $token=JWTAuth::getToken();
@@ -82,5 +113,12 @@ class UserController extends Controller
 
         }
        
+    }
+
+    public function destroy($id){
+        User::where('id',$id)->delete();
+        return  response()->json([
+            "message"=>"user supprimer avec succès"
+        ]);
     }
 }

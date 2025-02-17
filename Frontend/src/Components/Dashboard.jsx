@@ -1,12 +1,16 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { logout } from './Store/Actions/Action'
 
 
 function Dashboard() {
   const [user,setUser]=useState(null)
   const [loading,setLoading]=useState(true)
+  const token=useSelector(state=>state.userState.token)
   const navigate=useNavigate()
+  const  dispatch=useDispatch()
   useEffect(()=>{
     const dataUser=localStorage.getItem("user") 
     const token=localStorage.getItem("token_jwt")
@@ -39,20 +43,8 @@ function Dashboard() {
 
   // log out function
   const handleLogout = async()=>{
-    try{
-      const token=localStorage.getItem("token_jwt")
-      
-      await axios
-      .get("http://127.0.0.1:8000/api/user/logout",{
-        headers:{Authorization:`Bearer ${token}`}
-      })
-      //vidè le localsotorage
-      localStorage.removeItem("token_jwt")
-      localStorage.removeItem("user")
-      navigate("/login")
-    }catch(err){
-      console.error(err)
-    }
+    dispatch(logout(token))
+    navigate("/login")
 
   }
   if (loading) return <p className="text-center text-blue-600 text-4xl">Loading...</p>;
